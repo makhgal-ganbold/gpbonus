@@ -22,7 +22,7 @@ list; new and old grade points, a bonus point
 Computes student grade points with a bonus by minimizing absolute difference between the fixed significant level 0.05 and a p-value of Kolmogorov-Smirnov test which compares a distribution of grade points with the fixed normal distribution.
 }
 \details{
-It leaves untouched F points, which are lower than 60, after the bonus was added.
+It leaves untouched grade points, which are lower than 60, after the bonus was added.
 
 Grade points, which are greater than the \code{threshold}, won't be changed. Also grade points won't be increased over the \code{threshold}.
 }
