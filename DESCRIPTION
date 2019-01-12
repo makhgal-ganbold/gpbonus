@@ -1,13 +1,13 @@
 Package: gpbonus
 Type: Package
 Title: Grade Point Bonus
-Version: 0.2.0
+Version: 0.3.0
 Author: MAKHGAL Ganbold
 Maintainer: MAKHGAL Ganbold <makhgal@seas.num.edu.mn>
 Description: Computes student grade points with a bonus by minimizing absolute difference between the fixed significant level 0.05 and a p-value of Kolmogorov-Smirnov test which compares a distribution of grade points with the fixed normal distribution.
 License: GPL-3 + file LICENSE
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.1
 Suggests: testthat
-Imports: graphics
+Imports: graphics, magrittr

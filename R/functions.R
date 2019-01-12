@@ -24,6 +24,7 @@
 #' gp <- c(72, "E", 51, 69, "WF", 81, 61, 75, 54, "W")
 #' gpbonus::gp_bonus(gp, max.bonus = 30, threshold = Inf)
 #'
+#' @importFrom magrittr %>%
 #' @export
 
 gp_bonus <- function (gp, max.bonus = 15, min.bonus = 0, threshold = 90) {
@@ -34,28 +35,32 @@ gp_bonus <- function (gp, max.bonus = 15, min.bonus = 0, threshold = 90) {
   # reserve current grade points
   old.gp <- gp
   # convert to numerical values
-  gp <- as.numeric(gsub("[^0-9.]+", NA, gp))
+  gp <- gp %>% gsub(pattern = "[^0-9.]+", replacement = NA) %>% as.numeric()
   # exclude non-numeric grade points
-  gp.na <- as.numeric(stats::na.omit(gp))
+  gp.na <- gp %>% stats::na.omit() %>% as.numeric()
   # parameters
-  gp.na.len <- length(gp.na)
-  gp.na.mu <- mean(gp.na)
-  na.gp.sigma <- stats::sd(gp.na)
+  gp.na.len <- gp.na %>% length()
+  gp.na.mu <- gp.na %>% mean()
+  na.gp.sigma <- gp.na %>% stats::sd()
   # search for the optimized bonus point
-  bonus.point <- round(stats::optimize(f = function (x) {
+  bonus.point <- gp.na %>% stats::optimize(f = function (x, gp.na) {
     # grade points with a temporary bonus point
-    x <- gp.na + x
+    x <- gp.na %>% magrittr::add(x)
     # fix grade points for the threshold
     x <- ifelse(gp.na >= threshold, gp.na, ifelse(x >= threshold, threshold - 1, x))
     # leave untouched F points which are lower than 60 after the bonus was added
     x <- ifelse(x < 60, gp.na, x)
     # fix invalid grade points
-    x[x > 100] <- 100
+    x[x > 100] <- 100 # x <- x %>% magrittr::is_greater_than(100) %>% replace(x = x, list = ., values = 100)
     # prevent for ties
-    x <- x - abs(stats::rnorm(n = gp.na.len, mean = 0, sd = 0.01))
+    x <- stats::rnorm(n = gp.na.len, mean = 0, sd = 0.01) %>% abs() %>% magrittr::subtract(x) %>% abs()
     # Kolmogorov distance
-    abs(stats::ks.test(x = x, y = stats::pnorm, exact = FALSE, mean = gp.na.mu, sd = na.gp.sigma)$p.value - 0.05)
-  }, lower = min.bonus, upper = max.bonus)$minimum)
+    x %>%
+      stats::ks.test(y = stats::pnorm, exact = FALSE, mean = gp.na.mu, sd = na.gp.sigma) %>%
+      magrittr::use_series("p.value") %>%
+      magrittr::subtract(0.05) %>%
+      abs()
+  }, gp.na, lower = min.bonus, upper = max.bonus) %>% magrittr::use_series("minimum") %>% round()
   # fix grade points for the threshold
   gp <- ifelse(gp >= threshold, gp, ifelse(gp + bonus.point >= threshold, threshold - 1, gp + bonus.point))
   # leave untouched F points which are lower than 60 after the bonus was added
@@ -90,26 +95,31 @@ gp_bonus <- function (gp, max.bonus = 15, min.bonus = 0, threshold = 90) {
 #' new.gp <- gpbonus::gp_bonus(gp)$new.grade.points
 #' gpbonus::gp_summary(new.gp)
 #'
+#' @importFrom magrittr %>%
 #' @export
 
 gp_summary <- function (gp, plot = TRUE) {
   # convert to numerical values
-  gp <- as.numeric(gsub("[^0-9.]+", NA, gp))
+  gp <- gp %>% gsub(pattern = "[^0-9.]+", replacement = NA) %>% as.numeric()
   # exclude non-numeric grade points
-  gp.na <- as.numeric(stats::na.omit(gp))
+  gp.na <- gp %>% stats::na.omit() %>% as.numeric()
   # check if a histogram will be plotted
   if (plot) {
     # draw a histogram and get a frequency
-    h <- graphics::hist(gp.na, breaks = seq(from = 0, to = 100, by = 10), main = "Histogram of Grade Points", xlab = "Grade Points")
+    h <- gp.na %>% graphics::hist(breaks = seq(from = 0, to = 100, by = 10), main = "Histogram of Grade Points", xlab = "Grade Points")
     # add a normal density line
-    xfit <- seq(from = 0, to = 100, by = 1)
-    yfit <- stats::dnorm(xfit, mean = mean(gp.na), sd = stats::sd(gp.na))
-    yfit <- yfit * diff(h$mids[1:2]) * length(gp.na)
+    xfit <- 0:100
+    yfit <- xfit %>% stats::dnorm(mean = gp.na %>% mean(), sd = gp.na %>% stats::sd())
+    yfit <- h %>% magrittr::use_series("mids") %>% magrittr::extract(1:2) %>% diff() * yfit * gp.na %>% length()
     graphics::lines(xfit, yfit, col = "blue", lwd = 2)
   } else {
     # get a frequency only
-    h <- graphics::hist(gp.na, breaks = seq(from = 0, to = 100, by = 10), plot = FALSE)
+    h <- gp.na %>% graphics::hist(breaks = seq(from = 0, to = 100, by = 10), plot = FALSE)
   }
   # return frequency
-  c("other" = length(gp) - length(gp.na), "F" = sum(h$counts[1:6]), "D" = h$counts[7], "C" = h$counts[8], "B" = h$counts[9], "A" = h$counts[10])
+  c(
+    gp %>% length() - gp.na %>% length(),
+    h %>% magrittr::use_series("counts") %>% magrittr::extract(1:6) %>% sum(),
+    h %>% magrittr::use_series("counts") %>% magrittr::extract(7:10)
+  ) %>% magrittr::set_names(value = c("other", "F", "D", "C", "B", "A"))
 }
