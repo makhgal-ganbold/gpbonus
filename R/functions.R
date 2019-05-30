@@ -106,7 +106,7 @@ gp_summary <- function (gp, plot = TRUE) {
   # check if a histogram will be plotted
   if (plot) {
     # draw a histogram and get a frequency
-    h <- gp.na %>% graphics::hist(breaks = seq(from = 0, to = 100, by = 10), main = "Histogram of Grade Points", xlab = "Grade Points")
+    h <- gp.na %>% graphics::hist(breaks = seq(from = 0, to = 100, by = 10), right = FALSE, main = "Histogram of Grade Points", xlab = "Grade Points")
     # add a normal density line
     xfit <- 0:100
     yfit <- xfit %>% stats::dnorm(mean = gp.na %>% mean(), sd = gp.na %>% stats::sd())
@@ -114,7 +114,7 @@ gp_summary <- function (gp, plot = TRUE) {
     graphics::lines(xfit, yfit, col = "blue", lwd = 2)
   } else {
     # get a frequency only
-    h <- gp.na %>% graphics::hist(breaks = seq(from = 0, to = 100, by = 10), plot = FALSE)
+    h <- gp.na %>% graphics::hist(breaks = seq(from = 0, to = 100, by = 10), right = FALSE, plot = FALSE)
   }
   # return frequency
   c(
