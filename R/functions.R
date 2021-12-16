@@ -1,17 +1,17 @@
 #' @title Compute New Grade Points with Bonus
 #'
-#' @description Computes student grade points with a bonus by minimizing absolute difference between the fixed significant level 0.05 and a p-value of Kolmogorov-Smirnov test which compares a distribution of grade points with the fixed normal distribution.
+#' @description Computes student grade points with a bonus by minimizing the absolute difference between the fixed significant level 0.05 and a p-value of Kolmogorov-Smirnov test compares a distribution of grade points with the fixed normal distribution.
 #'
 #' @param gp a vector; student grade points
-#' @param max.bonus a positive numeric; upper bound of the bonus point
+#' @param max.bonus a positive numeric; the upper bound of the bonus point
 #' @param min.bonus a non-negative numeric; lower bound of the bonus point
-#' @param threshold a positive numeric; upper bound of grade points with bonus
+#' @param threshold a positive numeric; the upper bound of grade points with bonus
 #'
 #' @return list; new and old grade points, a bonus point
 #'
-#' @details It leaves untouched grade points, which are lower than 60, after the bonus was added.
+#' @details It doesn't increase grade points to be lower than 60 with the bonus points.
 #'
-#' Grade points, which are greater than the \code{threshold}, won't be changed. Also grade points won't be increased over the \code{threshold}.
+#' Grade points, which are greater than the \code{threshold}, won't be changed. Also, it won't increase grade points over the upper limit is defined by the parameter \code{threshold}.
 #'
 #' @seealso \code{\link{gp_summary}}
 #'
@@ -48,7 +48,7 @@ gp_bonus <- function (gp, max.bonus = 15, min.bonus = 0, threshold = 90) {
     x <- gp.na %>% magrittr::add(x)
     # fix grade points for the threshold
     x <- ifelse(gp.na >= threshold, gp.na, ifelse(x >= threshold, threshold - 1, x))
-    # leave untouched F points which are lower than 60 after the bonus was added
+    # don't touch F points are lower than 60 with the bonus
     x <- ifelse(x < 60, gp.na, x)
     # fix invalid grade points
     x[x > 100] <- 100 # x <- x %>% magrittr::is_greater_than(100) %>% replace(x = x, list = ., values = 100)
@@ -63,7 +63,7 @@ gp_bonus <- function (gp, max.bonus = 15, min.bonus = 0, threshold = 90) {
   }, gp.na, lower = min.bonus, upper = max.bonus) %>% magrittr::use_series("minimum") %>% round()
   # fix grade points for the threshold
   gp <- ifelse(gp >= threshold, gp, ifelse(gp + bonus.point >= threshold, threshold - 1, gp + bonus.point))
-  # leave untouched F points which are lower than 60 after the bonus was added
+  # don't touch F points are lower than 60 with the bonus
   gp <- ifelse(gp < 60, gp - bonus.point, gp)
   # fix invalid grade points
   gp[gp > 100] <- 100

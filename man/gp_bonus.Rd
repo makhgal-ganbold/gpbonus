@@ -9,22 +9,22 @@ gp_bonus(gp, max.bonus = 15, min.bonus = 0, threshold = 90)
 \arguments{
 \item{gp}{a vector; student grade points}
 
-\item{max.bonus}{a positive numeric; upper bound of the bonus point}
+\item{max.bonus}{a positive numeric; the upper bound of the bonus point}
 
 \item{min.bonus}{a non-negative numeric; lower bound of the bonus point}
 
-\item{threshold}{a positive numeric; upper bound of grade points with bonus}
+\item{threshold}{a positive numeric; the upper bound of grade points with bonus}
 }
 \value{
 list; new and old grade points, a bonus point
 }
 \description{
-Computes student grade points with a bonus by minimizing absolute difference between the fixed significant level 0.05 and a p-value of Kolmogorov-Smirnov test which compares a distribution of grade points with the fixed normal distribution.
+Computes student grade points with a bonus by minimizing the absolute difference between the fixed significant level 0.05 and a p-value of Kolmogorov-Smirnov test compares a distribution of grade points with the fixed normal distribution.
 }
 \details{
-It leaves untouched grade points, which are lower than 60, after the bonus was added.
+It doesn't increase grade points to be lower than 60 with the bonus points.
 
-Grade points, which are greater than the \code{threshold}, won't be changed. Also grade points won't be increased over the \code{threshold}.
+Grade points, which are greater than the \code{threshold}, won't be changed. Also, it won't increase grade points over the upper limit is defined by the parameter \code{threshold}.
 }
 \examples{
 ## Example 1

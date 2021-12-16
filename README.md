@@ -2,7 +2,7 @@
 
 *An R package*
 
-The goal of gpbonus is to compute student grade points with a bonus by minimizing absolute difference between the fixed significant level 0.05 and a p-value of Kolmogorov-Smirnov test which compares a distribution of grade points with the fixed normal distribution.
+The goal of gpbonus is to compute student grade points with a bonus by minimizing the absolute difference between the fixed significant level 0.05 and a p-value of the Kolmogorov-Smirnov test which compares a distribution of grade points with the fixed normal distribution.
 
 ## Example
 
@@ -32,14 +32,14 @@ devtools::install_github("galaamn/gpbonus")
 
 ## How to Developed The Package
 
-1. Create new package by using RStudio.
-2. Open "Project Options" and goto "Build Tools". Check "Generate Documentation with Roxygen".
+1. Create a new package by using RStudio.
+2. Open "Project Options" and go to "Build Tools". Check "Generate Documentation with Roxygen".
 3. Add GPLv3 license with the devtools::use_gpl3_license() function.
 4. Edit DESCRIPTION file.
 5. Rename "R/hello.R" to "R/functions.R".
-6. Declare new functions and write documentations in the "R/functions.R" file.
+6. Declare new functions and write documentation in the "R/functions.R" file.
 7. Check and fix errors by using commands: 'Install and Restart' and 'Check Package'.
-8. Prepare for package testing by using devtools::use_testthat() function and write tests. After that test and fix functions by using 'Test Package' command.
+8. Prepare for package testing by using devtools::use_testthat() function and writing tests. After that test and fix functions by using the 'Test Package' command.
 9. devtools::use_readme_md() and edit the README.md file.
 10. Build a source or a binary package.
 
@@ -52,4 +52,4 @@ Some useful keyboard shortcuts for package authoring:
 
 ## Author
 
-© 2018 MAKHGAL Ganbold [www.galaa.mn](http://galaa.mn/ "Galaa's Personal Page")
+© 2018 MAKHGAL Ganbold [www.galaa.mn](http://galaa.mn/)
